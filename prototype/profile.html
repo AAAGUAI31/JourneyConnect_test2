@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的主页 - JourneyConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .phone-container {
+            width: 393px;
+            height: 852px;
+            background: white;
+            margin: 0 auto;
+            overflow-y: auto;
+            position: relative;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .tab-active {
+            color: #0052D9;
+            border-bottom: 2px solid #0052D9;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="phone-container">
+        <!-- 用户信息卡片 -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 px-4 pt-12 pb-8">
+            <div class="flex items-center space-x-4 mb-4">
+                <img src="https://via.placeholder.com/80x80/0052D9/ffffff?text=张" alt="头像" class="w-20 h-20 rounded-full border-4 border-white" />
+                <div class="flex-1 text-white">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <h2 class="text-xl font-semibold">张三</h2>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <p class="text-sm text-blue-100 mb-2">微信号：zhangsan_123</p>
+                    <p class="text-sm text-blue-100">热爱旅行，寻找志同道合的旅伴</p>
+                </div>
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="bg-white px-4 py-4 -mt-4 rounded-t-2xl">
+            <div class="grid grid-cols-3 gap-4">
+                <div class="text-center">
+                    <div class="text-2xl font-semibold text-gray-900 mb-1">5</div>
+                    <div class="text-xs text-gray-500">发起的活动</div>
+                </div>
+                <div class="text-center border-x border-gray-200">
+                    <div class="text-2xl font-semibold text-gray-900 mb-1">12</div>
+                    <div class="text-xs text-gray-500">参加的活动</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-semibold text-gray-900 mb-1">23</div>
+                    <div class="text-xs text-gray-500">认识的朋友</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 切换 -->
+        <div class="bg-white px-4 pt-4">
+            <div class="flex space-x-6 border-b border-gray-200">
+                <button class="pb-3 px-1 tab-active text-sm font-medium">我发起的活动</button>
+                <button class="pb-3 px-1 text-sm font-medium text-gray-500">我参加的活动</button>
+            </div>
+        </div>
+
+        <!-- 活动列表 -->
+        <div class="px-4 py-4 space-y-4">
+            <!-- 活动卡片 1 -->
+            <div class="card p-4">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-base text-gray-900 mb-1">周末黄山露营之旅</h3>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>2024.03.15 - 03.17</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>安徽·黄山</span>
+                        </div>
+                    </div>
+                    <img src="https://via.placeholder.com/80x80/4F46E5/ffffff?text=活动" alt="活动封面" class="w-20 h-20 rounded-lg object-cover ml-3" />
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">3/8 人</span>
+                        <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">报名中</span>
+                    </div>
+                    <div class="text-xs text-gray-400">
+                        <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 活动卡片 2 -->
+            <div class="card p-4">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-base text-gray-900 mb-1">杭州西湖摄影一日游</h3>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>2024.03.10</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>浙江·杭州</span>
+                        </div>
+                    </div>
+                    <img src="https://via.placeholder.com/80x80/10B981/ffffff?text=活动" alt="活动封面" class="w-20 h-20 rounded-lg object-cover ml-3" />
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">已完成</span>
+                        <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded">已出行</span>
+                    </div>
+                    <div class="text-xs text-gray-400">
+                        <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 活动卡片 3 -->
+            <div class="card p-4">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-base text-gray-900 mb-1">云南大理洱海环湖骑行</h3>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>2024.03.25 - 03.28</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>云南·大理</span>
+                        </div>
+                    </div>
+                    <img src="https://via.placeholder.com/80x80/F59E0B/ffffff?text=活动" alt="活动封面" class="w-20 h-20 rounded-lg object-cover ml-3" />
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">7/12 人</span>
+                        <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">报名中</span>
+                    </div>
+                    <div class="text-xs text-gray-400">
+                        <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航栏 -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+            <div class="flex justify-around items-center">
+                <div class="flex flex-col items-center space-y-1">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span class="text-xs text-gray-400">首页</span>
+                </div>
+                <div class="flex flex-col items-center space-y-1">
+                    <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                    </svg>
+                    <span class="text-xs text-blue-600 font-medium">我的</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

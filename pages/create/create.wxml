@@ -1,0 +1,109 @@
+<!--pages/create/create.wxml-->
+<scroll-view scroll-y class="container">
+  <view class="form-container">
+    <!-- 活动标题 -->
+    <view class="form-item">
+      <view class="form-label">活动标题 *</view>
+      <t-input placeholder="请输入活动标题" value="{{form.title}}" bind:change="onFieldChange" data-field="title" />
+    </view>
+
+    <!-- 活动时间 -->
+    <view class="form-item">
+      <view class="form-label">活动时间 *</view>
+      <view class="date-row">
+        <view class="date-item">
+          <view class="date-label">开始日期</view>
+          <picker mode="date" value="{{form.startDate}}" bindchange="onStartDateChange">
+            <view class="picker-content">{{form.startDate || '选择开始日期'}}</view>
+          </picker>
+        </view>
+        <view class="date-item">
+          <view class="date-label">结束日期</view>
+          <picker mode="date" value="{{form.endDate}}" bindchange="onEndDateChange">
+            <view class="picker-content">{{form.endDate || '选择结束日期'}}</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <!-- 活动地点 -->
+    <view class="form-item">
+      <view class="form-label">活动地点 *</view>
+      <view class="location-row">
+        <t-input class="location-input" placeholder="请输入地点" value="{{form.location}}" bind:change="onFieldChange" data-field="location" />
+        <button class="location-btn" bindtap="onLocationSelect">
+          <text class="location-icon">📍</text>
+        </button>
+      </view>
+    </view>
+
+    <!-- 行程描述 -->
+    <view class="form-item">
+      <view class="form-label">行程描述 *</view>
+      <t-textarea placeholder="请按天描述详细的行程安排..." value="{{form.description}}" bind:change="onFieldChange" data-field="description" maxlength="500" rows="6" />
+      <view class="form-hint">提示：可按 "Day 1: ..." 的格式分段描述</view>
+    </view>
+
+    <!-- 旅行风格 -->
+    <view class="form-item">
+      <view class="form-label">旅行风格 *</view>
+      <view class="tags-container">
+        <t-tag 
+          wx:for="{{styleTags}}" 
+          wx:key="*this" 
+          wx:for-item="tag"
+          size="medium"
+          theme="{{form.tags.indexOf(tag) > -1 ? 'primary' : 'default'}}"
+          bindtap="onTagSelect"
+          data-tag="{{tag}}"
+        >
+          {{tag}}
+        </t-tag>
+      </view>
+    </view>
+
+    <!-- 人数上限 -->
+    <view class="form-item">
+      <view class="form-label">人数上限 *</view>
+      <view class="stepper-container">
+        <t-stepper 
+          value="{{form.maxMembers}}" 
+          min="2" 
+          max="50" 
+          bind:change="onMaxMembersChange"
+        />
+        <text class="stepper-unit">人</text>
+      </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="form-item">
+      <view class="form-label">联系方式 *</view>
+      <t-input placeholder="微信号或手机号" value="{{form.contact}}" bind:change="onFieldChange" data-field="contact" />
+    </view>
+
+    <!-- 活动封面 -->
+    <view class="form-item">
+      <view class="form-label">活动封面</view>
+      <t-upload
+        files="{{form.coverFiles}}"
+        max="1"
+        media-type="image"
+        bind:change="onCoverChange"
+      >
+        <view class="upload-placeholder">
+          <text class="upload-icon">📷</text>
+          <text class="upload-text">点击上传封面图片</text>
+          <text class="upload-hint">建议尺寸 750x400，支持 JPG、PNG</text>
+        </view>
+      </t-upload>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="footer-placeholder"></view>
+  <view class="footer-bar">
+    <t-button theme="primary" size="large" bindtap="onSubmit" block>发布活动</t-button>
+  </view>
+</scroll-view>
+

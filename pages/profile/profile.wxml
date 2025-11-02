@@ -1,0 +1,122 @@
+<!--pages/profile/profile.wxml-->
+<scroll-view scroll-y class="container">
+  <!-- 用户信息卡片 -->
+  <view class="user-header">
+    <view class="user-info-card">
+      <view class="user-info">
+        <t-avatar size="{{160}}" image="{{userInfo.avatar}}" />
+        <view class="user-details">
+          <view class="user-name-row">
+            <text class="user-name">{{userInfo.name || '未登录'}}</text>
+            <t-tag wx:if="{{userInfo.verified}}" size="small" theme="success">已认证</t-tag>
+          </view>
+          <text class="user-wechat" wx:if="{{userInfo.wechat}}">微信号：{{userInfo.wechat}}</text>
+          <text class="user-signature" wx:if="{{userInfo.signature}}">{{userInfo.signature}}</text>
+        </view>
+        <view class="edit-btn" bindtap="onEditProfile">
+          <text class="edit-icon">✏️</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 统计信息 -->
+    <view class="stats-card">
+      <view class="stats-item">
+        <text class="stats-value">{{stats.createdCount || 0}}</text>
+        <text class="stats-label">发起的活动</text>
+      </view>
+      <view class="stats-item stats-divider">
+        <text class="stats-value">{{stats.joinedCount || 0}}</text>
+        <text class="stats-label">参加的活动</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-value">{{stats.friendsCount || 0}}</text>
+        <text class="stats-label">认识的朋友</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="tabs-container">
+    <t-tabs value="{{activeTab}}" bind:change="onTabChange" theme="normal">
+      <t-tab-panel value="created" label="我发起的活动">
+        <view class="activities-list">
+          <view wx:if="{{createdActivities.length === 0}}" class="empty-state">
+            <text>暂无发起的活动</text>
+          </view>
+          <view wx:for="{{createdActivities}}" wx:key="id" wx:for-item="activity" class="activity-card" bindtap="onActivityTap" data-id="{{activity.id}}">
+            <view class="card-content">
+              <view class="card-left">
+                <view class="activity-title">{{activity.title}}</view>
+                <view class="activity-info">
+                  <text class="info-item">
+                    <text class="icon">📅</text>
+                    {{activity.dateRange}}
+                  </text>
+                  <text class="info-item">
+                    <text class="icon">📍</text>
+                    {{activity.location}}
+                  </text>
+                </view>
+                <view class="activity-footer">
+                  <text class="member-count">{{activity.currentMembers}}/{{activity.maxMembers}} 人</text>
+                  <t-tag size="small" theme="{{activity.status === '报名中' ? 'success' : 'default'}}">{{activity.status}}</t-tag>
+                </view>
+              </view>
+              <image class="activity-cover" src="{{activity.cover}}" mode="aspectFill" />
+            </view>
+          </view>
+        </view>
+      </t-tab-panel>
+      <t-tab-panel value="joined" label="我参加的活动">
+        <view class="activities-list">
+          <view wx:if="{{joinedActivities.length === 0}}" class="empty-state">
+            <text>暂无参加的活动</text>
+          </view>
+          <view wx:for="{{joinedActivities}}" wx:key="id" wx:for-item="activity" class="activity-card" bindtap="onActivityTap" data-id="{{activity.id}}">
+            <view class="card-content">
+              <view class="card-left">
+                <view class="activity-title">{{activity.title}}</view>
+                <view class="activity-info">
+                  <text class="info-item">
+                    <text class="icon">📅</text>
+                    {{activity.dateRange}}
+                  </text>
+                  <text class="info-item">
+                    <text class="icon">📍</text>
+                    {{activity.location}}
+                  </text>
+                </view>
+                <view class="activity-footer">
+                  <text class="member-count">{{activity.currentMembers}}/{{activity.maxMembers}} 人</text>
+                  <t-tag size="small" theme="{{activity.status === '报名中' ? 'success' : 'default'}}">{{activity.status}}</t-tag>
+                </view>
+              </view>
+              <image class="activity-cover" src="{{activity.cover}}" mode="aspectFill" />
+            </view>
+          </view>
+        </view>
+      </t-tab-panel>
+    </t-tabs>
+  </view>
+
+  <!-- 登录提示 -->
+  <view wx:if="{{!userInfo.name}}" class="login-prompt">
+    <t-button theme="primary" size="large" bindtap="onLogin" block>微信一键登录</t-button>
+  </view>
+</scroll-view>
+
+<!-- 编辑个人信息弹窗 -->
+<t-dialog visible="{{showEditDialog}}" title="编辑个人信息" bind:confirm="onSaveProfile" bind:cancel="onCancelEdit">
+  <view class="edit-form">
+    <view class="form-item">
+      <view class="form-label">个性签名</view>
+      <t-textarea placeholder="介绍一下自己..." value="{{editForm.signature}}" bind:change="onEditFormChange" data-field="signature" maxlength="100" rows="4" />
+    </view>
+    <view class="form-item">
+      <view class="form-label">联系方式</view>
+      <t-input placeholder="微信号或手机号" value="{{editForm.contact}}" bind:change="onEditFormChange" data-field="contact" />
+    </view>
+  </view>
+</t-dialog>
+

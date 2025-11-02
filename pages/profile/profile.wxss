@@ -1,0 +1,191 @@
+/* pages/profile/profile.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.user-header {
+  background: linear-gradient(135deg, #0052D9 0%, #1E88E5 100%);
+  padding: 32rpx;
+  padding-top: calc(var(--status-bar-height) + 32rpx);
+}
+
+.user-info-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.user-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 24rpx;
+}
+
+.user-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.user-name-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.user-name {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.user-wechat,
+.user-signature {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.edit-btn {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-icon {
+  font-size: 32rpx;
+}
+
+.stats-card {
+  background-color: #ffffff;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 32rpx;
+  display: flex;
+  justify-content: space-around;
+  margin-top: -24rpx;
+}
+
+.stats-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.stats-divider {
+  border-left: 1rpx solid #f0f0f0;
+  border-right: 1rpx solid #f0f0f0;
+}
+
+.stats-value {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.stats-label {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.tabs-container {
+  background-color: #ffffff;
+  margin-top: 16rpx;
+}
+
+.activities-list {
+  padding: 32rpx;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 100rpx 0;
+  color: #999999;
+  font-size: 28rpx;
+}
+
+.activity-card {
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.card-content {
+  display: flex;
+  align-items: flex-start;
+}
+
+.card-left {
+  flex: 1;
+}
+
+.activity-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 16rpx;
+}
+
+.activity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.info-item {
+  font-size: 24rpx;
+  color: #999999;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  margin-right: 8rpx;
+}
+
+.activity-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16rpx;
+}
+
+.member-count {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.activity-cover {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 16rpx;
+  margin-left: 24rpx;
+  object-fit: cover;
+}
+
+.login-prompt {
+  padding: 64rpx 32rpx;
+}
+
+.edit-form {
+  padding: 32rpx 0;
+}
+
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: #666666;
+  margin-bottom: 16rpx;
+}
+

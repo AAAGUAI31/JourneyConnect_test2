@@ -1,0 +1,267 @@
+/* pages/detail/detail.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+
+.cover-section {
+  position: relative;
+  width: 100%;
+  height: 512rpx;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.status-badge {
+  position: absolute;
+  top: 32rpx;
+  right: 32rpx;
+}
+
+.info-section {
+  background-color: #ffffff;
+  padding: 40rpx 32rpx;
+}
+
+.activity-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 32rpx;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.info-icon {
+  margin-right: 12rpx;
+}
+
+.info-text {
+  flex: 1;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+}
+
+.members-section {
+  background-color: #fafafa;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.members-info {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.members-label {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.members-count {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #0052D9;
+}
+
+.members-separator {
+  color: #e0e0e0;
+}
+
+.members-max,
+.members-unit {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.members-avatars {
+  display: flex;
+  align-items: center;
+  gap: -16rpx;
+}
+
+.more-members {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #666666;
+  border: 4rpx solid #ffffff;
+  margin-left: -16rpx;
+}
+
+.schedule-section,
+.creator-section,
+.members-list-section {
+  background-color: #ffffff;
+  margin-top: 16rpx;
+  padding: 40rpx 32rpx;
+}
+
+.section-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 32rpx;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+
+.schedule-item {
+  position: relative;
+  padding-left: 32rpx;
+  border-left: 4rpx solid #0052D9;
+}
+
+.schedule-day {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.day-label {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #0052D9;
+}
+
+.day-date {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.schedule-content {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.6;
+}
+
+.creator-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 24rpx;
+}
+
+.creator-info {
+  flex: 1;
+}
+
+.creator-name-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.creator-name {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.creator-contact {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.contact-icon {
+  margin-right: 4rpx;
+}
+
+.members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.member-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.member-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.member-detail {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.footer-placeholder {
+  height: 120rpx;
+}
+
+.footer-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  padding: 24rpx 32rpx;
+  border-top: 1rpx solid #f0f0f0;
+  z-index: 100;
+}
+
+.register-form {
+  padding: 32rpx 0;
+}
+
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: #666666;
+  margin-bottom: 16rpx;
+}
+

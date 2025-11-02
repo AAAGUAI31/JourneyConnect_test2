@@ -1,0 +1,130 @@
+<!--pages/detail/detail.wxml-->
+<scroll-view scroll-y class="container">
+  <!-- 活动封面 -->
+  <view class="cover-section">
+    <image class="cover-image" src="{{activity.cover}}" mode="aspectFill" />
+    <view class="status-badge">
+      <t-tag size="small" theme="success">{{activity.status}}</t-tag>
+    </view>
+  </view>
+
+  <!-- 活动基本信息 -->
+  <view class="info-section">
+    <view class="activity-title">{{activity.title}}</view>
+    
+    <view class="info-list">
+      <view class="info-item">
+        <text class="info-icon">📅</text>
+        <text class="info-text">{{activity.dateRange}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-icon">📍</text>
+        <text class="info-text">{{activity.location}}</text>
+      </view>
+    </view>
+
+    <!-- 旅行风格标签 -->
+    <view class="tags-container">
+      <t-tag wx:for="{{activity.tags}}" wx:key="*this" wx:for-item="tag" size="small" theme="primary">{{tag}}</t-tag>
+    </view>
+
+    <!-- 报名人数 -->
+    <view class="members-section">
+      <view class="members-info">
+        <text class="members-label">已报名</text>
+        <text class="members-count">{{activity.currentMembers}}</text>
+        <text class="members-separator">/</text>
+        <text class="members-max">{{activity.maxMembers}}</text>
+        <text class="members-unit">人</text>
+      </view>
+      <view class="members-avatars" bindtap="onShowMembers">
+        <t-avatar wx:for="{{activity.members}}" wx:key="id" wx:for-item="member" size="{{64}}" image="{{member.avatar}}" />
+        <view class="more-members" wx:if="{{activity.members.length < activity.currentMembers}}">
+          <text>+{{activity.currentMembers - activity.members.length}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 行程安排 -->
+  <view class="schedule-section">
+    <view class="section-title">行程安排</view>
+    <view class="schedule-list">
+      <view wx:for="{{activity.schedule}}" wx:key="day" wx:for-item="day" class="schedule-item">
+        <view class="schedule-day">
+          <text class="day-label">Day {{day.day}}</text>
+          <text class="day-date">{{day.date}}</text>
+        </view>
+        <view class="schedule-content">{{day.content}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发起人信息 -->
+  <view class="creator-section">
+    <view class="section-title">发起人</view>
+    <view class="creator-card">
+      <t-avatar size="{{120}}" image="{{activity.creator.avatar}}" />
+      <view class="creator-info">
+        <view class="creator-name-row">
+          <text class="creator-name">{{activity.creator.name}}</text>
+          <t-tag size="small" theme="default">发起人</t-tag>
+        </view>
+        <view class="creator-contact">
+          <text class="contact-icon">👤</text>
+          <text class="contact-text">微信号：{{activity.creator.wechat}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 报名人员列表 -->
+  <view class="members-list-section">
+    <view class="section-title">报名人员（{{activity.currentMembers}}人）</view>
+    <view class="members-list">
+      <view wx:for="{{activity.members}}" wx:key="id" wx:for-item="member" class="member-item">
+        <t-avatar size="{{96}}" image="{{member.avatar}}" />
+        <view class="member-info">
+          <text class="member-name">{{member.name}}</text>
+          <text class="member-detail">{{member.age}}岁 · {{member.gender}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="footer-placeholder"></view>
+  <view class="footer-bar">
+    <t-button theme="primary" size="large" bindtap="onRegister" block>立即报名</t-button>
+  </view>
+</scroll-view>
+
+<!-- 报名弹窗 -->
+<t-dialog visible="{{showRegisterDialog}}" title="报名信息" bind:confirm="onRegisterConfirm" bind:cancel="onRegisterCancel">
+  <view class="register-form">
+    <view class="form-item">
+      <view class="form-label">姓名/昵称 *</view>
+      <t-input placeholder="请输入姓名或昵称" value="{{registerForm.name}}" bind:change="onFormChange" data-field="name" />
+    </view>
+    <view class="form-item">
+      <view class="form-label">性别 *</view>
+      <t-radio-group value="{{registerForm.gender}}" bind:change="onGenderChange">
+        <t-radio value="male" label="男" />
+        <t-radio value="female" label="女" />
+      </t-radio-group>
+    </view>
+    <view class="form-item">
+      <view class="form-label">年龄（可选）</view>
+      <t-input type="digit" placeholder="请输入年龄" value="{{registerForm.age}}" bind:change="onFormChange" data-field="age" />
+    </view>
+    <view class="form-item">
+      <view class="form-label">联系方式 *</view>
+      <t-input placeholder="微信号或手机号" value="{{registerForm.contact}}" bind:change="onFormChange" data-field="contact" />
+    </view>
+    <view class="form-item">
+      <view class="form-label">自我介绍</view>
+      <t-textarea placeholder="简单介绍一下自己..." value="{{registerForm.intro}}" bind:change="onFormChange" data-field="intro" maxlength="200" />
+    </view>
+  </view>
+</t-dialog>
+

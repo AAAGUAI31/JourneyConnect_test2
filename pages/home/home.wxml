@@ -1,0 +1,55 @@
+<!--pages/home/home.wxml-->
+<view class="container">
+  <!-- 顶部搜索栏 -->
+  <view class="search-bar">
+    <t-search value="{{searchValue}}" placeholder="搜索活动、地点..." bind:change="onSearchChange" bind:submit="onSearch" />
+    <view class="filter-btn" bindtap="onFilter">筛选</view>
+  </view>
+
+  <!-- 活动列表 -->
+  <scroll-view scroll-y class="activity-list" refresher-enabled="{{true}}" refresher-triggered="{{refreshing}}" bind:refresherrefresh="onRefresh" bind:scrolltolower="onLoadMore">
+    <view wx:if="{{activities.length === 0 && !loading}}" class="empty-container">
+      <t-empty description="暂无活动" />
+    </view>
+    
+    <view wx:for="{{activities}}" wx:key="id" class="activity-card" bindtap="onActivityTap" data-id="{{item.id}}">
+      <view class="card-content">
+        <view class="card-left">
+          <view class="activity-title">{{item.title}}</view>
+          <view class="activity-info">
+            <text class="info-item">
+              <text class="icon">📅</text>
+              {{item.dateRange}}
+            </text>
+            <text class="info-item">
+              <text class="icon">📍</text>
+              {{item.location}}
+            </text>
+          </view>
+            <view class="activity-footer">
+              <view class="creator-info">
+                <t-avatar size="{{40}}" image="{{item.creator.avatar}}" />
+                <text class="creator-name">{{item.creator.name}}</text>
+                <text class="separator">|</text>
+                <text class="member-count">{{item.currentMembers}}/{{item.maxMembers}} 人</text>
+              </view>
+            </view>
+        </view>
+        <image class="activity-cover" src="{{item.cover}}" mode="aspectFill" />
+      </view>
+      <view class="activity-tags">
+        <t-tag wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag" size="small" theme="primary">{{tag}}</t-tag>
+      </view>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading-container">
+      <t-loading theme="dots" size="40rpx" />
+    </view>
+  </scroll-view>
+
+  <!-- 悬浮按钮 -->
+  <view class="fab" bindtap="onCreateActivity">
+    <view class="fab-button">+</view>
+  </view>
+</view>
+

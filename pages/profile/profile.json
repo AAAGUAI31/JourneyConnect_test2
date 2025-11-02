@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "我的",
+  "usingComponents": {
+    "t-avatar": "tdesign-miniprogram/avatar/avatar",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-tabs": "tdesign-miniprogram/tabs/tabs",
+    "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-dialog": "tdesign-miniprogram/dialog/dialog",
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea"
+  }
+}
+

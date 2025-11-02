@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "发起活动",
+  "usingComponents": {
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-upload": "tdesign-miniprogram/upload/upload",
+    "t-stepper": "tdesign-miniprogram/stepper/stepper"
+  }
+}
+

@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "活动广场",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "t-search": "tdesign-miniprogram/search/search",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-avatar": "tdesign-miniprogram/avatar/avatar",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-loading": "tdesign-miniprogram/loading/loading",
+    "t-empty": "tdesign-miniprogram/empty/empty"
+  }
+}
+

@@ -1,17 +1,17 @@
 <!--pages/profile/profile.wxml-->
-<scroll-view scroll-y class="container">
+<scroll-view scroll-y class="container" enable-flex>
   <!-- 用户信息卡片 -->
   <view class="user-header">
     <view class="user-info-card">
       <view class="user-info">
-        <t-avatar size="{{160}}" image="{{userInfo.avatar}}" />
+        <t-avatar size="{{160}}" image="{{userInfo ? userInfo.avatar : ''}}" />
         <view class="user-details">
           <view class="user-name-row">
-            <text class="user-name">{{userInfo.name || '未登录'}}</text>
-            <t-tag wx:if="{{userInfo.verified}}" size="small" theme="success">已认证</t-tag>
+            <text class="user-name">{{userInfo ? userInfo.name : '未登录'}}</text>
+            <t-tag wx:if="{{userInfo && userInfo.verified}}" size="small" theme="success">已认证</t-tag>
           </view>
-          <text class="user-wechat" wx:if="{{userInfo.wechat}}">微信号：{{userInfo.wechat}}</text>
-          <text class="user-signature" wx:if="{{userInfo.signature}}">{{userInfo.signature}}</text>
+          <text class="user-wechat" wx:if="{{userInfo && userInfo.wechat}}">微信号：{{userInfo.wechat}}</text>
+          <text class="user-signature" wx:if="{{userInfo && userInfo.signature}}">{{userInfo.signature}}</text>
         </view>
         <view class="edit-btn" bindtap="onEditProfile">
           <text class="edit-icon">✏️</text>
@@ -101,7 +101,7 @@
   </view>
 
   <!-- 登录提示 -->
-  <view wx:if="{{!userInfo.name}}" class="login-prompt">
+  <view wx:if="{{!isLoggedIn || !userInfo}}" class="login-prompt">
     <t-button theme="primary" size="large" bindtap="onLogin" block>微信一键登录</t-button>
   </view>
 </scroll-view>

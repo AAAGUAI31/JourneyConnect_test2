@@ -49,15 +49,7 @@
   <!-- 行程安排 -->
   <view class="schedule-section">
     <view class="section-title">行程安排</view>
-    <view class="schedule-list">
-      <view wx:for="{{activity.schedule}}" wx:key="day" wx:for-item="day" class="schedule-item">
-        <view class="schedule-day">
-          <text class="day-label">Day {{day.day}}</text>
-          <text class="day-date">{{day.date}}</text>
-        </view>
-        <view class="schedule-content">{{day.content}}</view>
-      </view>
-    </view>
+    <view class="schedule-content-text">{{activity.description}}</view>
   </view>
 
   <!-- 发起人信息 -->
@@ -86,7 +78,6 @@
         <t-avatar size="{{96}}" image="{{member.avatar}}" />
         <view class="member-info">
           <text class="member-name">{{member.name}}</text>
-          <text class="member-detail">{{member.age}}岁 · {{member.gender}}</text>
         </view>
       </view>
     </view>
@@ -95,7 +86,33 @@
   <!-- 底部按钮 -->
   <view class="footer-placeholder"></view>
   <view class="footer-bar">
-    <t-button theme="primary" size="large" bindtap="onRegister" block>立即报名</t-button>
+    <t-button 
+      wx:if="{{isRegistered && !isCreator}}" 
+      theme="default" 
+      size="large" 
+      block 
+      disabled
+    >
+      已报名
+    </t-button>
+    <t-button 
+      wx:elif="{{activity.currentMembers >= activity.maxMembers && !isCreator}}" 
+      theme="default" 
+      size="large" 
+      block 
+      disabled
+    >
+      已满员
+    </t-button>
+    <t-button 
+      wx:else
+      theme="primary" 
+      size="large" 
+      bindtap="{{isCreator ? 'onEditActivity' : 'onRegister'}}" 
+      block
+    >
+      {{isCreator ? '完善报名信息' : '立即报名'}}
+    </t-button>
   </view>
 </scroll-view>
 
@@ -127,4 +144,152 @@
     </view>
   </view>
 </t-dialog>
+
+<!-- 编辑活动弹窗 -->
+<t-popup visible="{{showEditDialog}}" placement="bottom">
+  <view class="edit-popup-container">
+    <view class="edit-popup-header">
+      <text class="edit-popup-title">编辑活动</text>
+      <view class="edit-popup-close" bindtap="onEditCancel">
+        <text>×</text>
+      </view>
+    </view>
+    
+    <scroll-view scroll-y class="edit-popup-content">
+      <view class="edit-form">
+        <!-- 活动标题 -->
+        <view class="form-item">
+          <view class="form-label">活动标题 *</view>
+          <t-input placeholder="请输入活动标题" value="{{editForm.title}}" bind:change="onEditFieldChange" data-field="title" />
+        </view>
+
+        <!-- 活动时间 -->
+        <view class="form-item">
+          <view class="form-label">活动时间 *</view>
+          <view class="date-row">
+            <view class="date-item">
+              <view class="date-label">开始日期</view>
+              <picker mode="date" value="{{editForm.startDate}}" bindchange="onEditStartDateChange">
+                <view class="picker-content">{{editForm.startDate || '选择开始日期'}}</view>
+              </picker>
+            </view>
+            <view class="date-item">
+              <view class="date-label">结束日期</view>
+              <picker mode="date" value="{{editForm.endDate}}" bindchange="onEditEndDateChange">
+                <view class="picker-content">{{editForm.endDate || '选择结束日期'}}</view>
+              </picker>
+            </view>
+          </view>
+        </view>
+
+        <!-- 活动地点 -->
+        <view class="form-item">
+          <view class="form-label">活动地点 *</view>
+          <view class="location-row">
+            <t-input class="location-input" placeholder="请输入地点" value="{{editForm.location}}" bind:change="onEditFieldChange" data-field="location" />
+            <button class="location-btn" bindtap="onEditLocationSelect">
+              <text class="location-icon">📍</text>
+            </button>
+          </view>
+        </view>
+
+        <!-- 行程描述 -->
+        <view class="form-item">
+          <view class="form-label">行程描述 *</view>
+          <t-textarea placeholder="请按天描述详细的行程安排..." value="{{editForm.description}}" bind:change="onEditFieldChange" data-field="description" maxlength="500" rows="6" />
+        </view>
+
+        <!-- 旅行风格 -->
+        <view class="form-item">
+          <view class="form-label">旅行风格 *</view>
+          <view class="tags-container">
+            <t-tag 
+              wx:for="{{styleTags}}" 
+              wx:key="*this" 
+              wx:for-item="tag"
+              size="medium"
+              theme="{{tagSelected[tag] === true ? 'primary' : 'default'}}"
+              bindtap="onEditTagSelect"
+              data-tag="{{tag}}"
+            >
+              {{tag}}
+            </t-tag>
+          </view>
+        </view>
+
+        <!-- 人数上限 -->
+        <view class="form-item">
+          <view class="form-label">人数上限 *</view>
+          <view class="stepper-container">
+            <t-stepper 
+              value="{{editForm.maxMembers}}" 
+              min="2" 
+              max="50" 
+              bind:change="onEditMaxMembersChange"
+            />
+            <text class="stepper-unit">人</text>
+          </view>
+        </view>
+
+        <!-- 联系方式 -->
+        <view class="form-item">
+          <view class="form-label">联系方式 *</view>
+          <t-input placeholder="微信号或手机号" value="{{editForm.contact}}" bind:change="onEditFieldChange" data-field="contact" />
+        </view>
+
+        <!-- 活动封面 -->
+        <view class="form-item">
+          <view class="form-label">活动封面</view>
+          <view class="cover-upload-container">
+            <!-- 图片预览 -->
+            <view wx:if="{{editForm.coverFiles.length > 0}}" class="cover-preview">
+              <view wx:if="{{editForm.coverFiles[0].url}}" style="width: 100%; height: 100%;">
+                <image class="cover-image" src="{{editForm.coverFiles[0].url}}" mode="aspectFill" />
+              </view>
+              <view wx:elif="{{editForm.coverFiles[0].path}}" style="width: 100%; height: 100%;">
+                <image class="cover-image" src="{{editForm.coverFiles[0].path}}" mode="aspectFill" />
+              </view>
+              <view wx:elif="{{editForm.coverFiles[0].tempFilePath}}" style="width: 100%; height: 100%;">
+                <image class="cover-image" src="{{editForm.coverFiles[0].tempFilePath}}" mode="aspectFill" />
+              </view>
+              <view wx:else style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999;">
+                <text>无法显示预览（路径缺失）</text>
+              </view>
+              <view class="cover-delete" bindtap="onEditCoverDelete">
+                <text class="delete-icon">×</text>
+              </view>
+            </view>
+            <!-- 上传按钮（加号） -->
+            <t-upload
+              class="cover-upload-btn"
+              files="{{editForm.coverFiles}}"
+              max="1"
+              media-type="image"
+              grid-config="{{gridConfig}}"
+              bind:change="onEditCoverChange"
+              bind:success="onEditUploadSuccess"
+              bind:fail="onEditUploadFail"
+              bind:progress="onEditUploadProgress"
+            >
+              <view slot="add-content" class="upload-add-btn" bindtap="onEditManualChooseImage">
+                <text class="add-icon">+</text>
+              </view>
+            </t-upload>
+          </view>
+          <view class="upload-hint-text">建议尺寸 750x400，支持 JPG、PNG</view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 底部按钮 -->
+    <view class="edit-popup-footer">
+      <t-button theme="danger" size="large" bindtap="onDeleteActivity" style="margin-right: 16rpx; flex: 1;">
+        删除活动
+      </t-button>
+      <t-button theme="primary" size="large" bindtap="onEditConfirm" style="flex: 1;">
+        保存修改
+      </t-button>
+    </view>
+  </view>
+</t-popup>
 

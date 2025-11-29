@@ -1,8 +1,10 @@
 /* pages/create/create.wxss */
 .container {
+  width: 100%;
   min-height: 100vh;
   background-color: #f5f5f5;
   padding-bottom: 120rpx;
+  box-sizing: border-box;
 }
 
 .form-container {
@@ -80,6 +82,13 @@
   gap: 16rpx;
 }
 
+/* 标签点击交互优化 */
+.tags-container .t-tag {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
 .stepper-container {
   display: flex;
   align-items: center;
@@ -91,31 +100,123 @@
   color: #666666;
 }
 
-.upload-placeholder {
+/* 封面上传容器 */
+.cover-upload-container {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  gap: 24rpx;
+  width: 100%;
+}
+
+/* 图片预览 */
+.cover-preview {
+  position: relative;
+  width: 400rpx;
+  height: 300rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 16rpx;
+}
+
+.cover-delete {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 48rpx;
+  height: 48rpx;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 64rpx 32rpx;
+  z-index: 10;
+}
+
+.delete-icon {
+  color: #ffffff;
+  font-size: 36rpx;
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* 上传按钮（加号） */
+.cover-upload-btn {
+  flex-shrink: 0;
+  width: 300rpx;
+  height: 300rpx;
+  display: block;
+}
+
+/* 覆盖 t-upload 组件的默认样式 */
+.cover-upload-btn.t-upload {
+  width: 300rpx !important;
+  height: 300rpx !important;
+  position: relative;
+}
+
+.cover-upload-btn .t-grid {
+  width: 100%;
+  height: 100%;
+}
+
+.cover-upload-btn .t-upload__grid-content {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+.cover-upload-btn .t-upload__grid {
+  width: 100%;
+  height: 100%;
+}
+
+.cover-upload-btn .t-upload__wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.cover-upload-btn .t-upload__add-icon {
+  display: none !important;
+}
+
+.upload-add-btn {
+  width: 100%;
+  height: 100%;
   border: 2rpx dashed #e0e0e0;
   border-radius: 16rpx;
   background-color: #fafafa;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  position: relative;
 }
 
-.upload-icon {
-  font-size: 96rpx;
-  margin-bottom: 16rpx;
+.upload-add-btn:active {
+  background-color: #f0f0f0;
+  border-color: #d0d0d0;
 }
 
-.upload-text {
-  font-size: 28rpx;
-  color: #666666;
-  margin-bottom: 8rpx;
+.add-icon {
+  font-size: 80rpx;
+  color: #999999;
+  font-weight: 300;
+  line-height: 1;
+  display: block;
 }
 
-.upload-hint {
+.upload-hint-text {
   font-size: 24rpx;
   color: #999999;
+  margin-top: 16rpx;
 }
 
 .footer-placeholder {

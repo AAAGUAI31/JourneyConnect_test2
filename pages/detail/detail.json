@@ -8,7 +8,10 @@
     "t-input": "tdesign-miniprogram/input/input",
     "t-textarea": "tdesign-miniprogram/textarea/textarea",
     "t-radio-group": "tdesign-miniprogram/radio-group/radio-group",
-    "t-radio": "tdesign-miniprogram/radio/radio"
+    "t-radio": "tdesign-miniprogram/radio/radio",
+    "t-popup": "tdesign-miniprogram/popup/popup",
+    "t-stepper": "tdesign-miniprogram/stepper/stepper",
+    "t-upload": "tdesign-miniprogram/upload/upload"
   }
 }
 

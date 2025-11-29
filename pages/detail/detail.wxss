@@ -1,8 +1,10 @@
 /* pages/detail/detail.wxss */
 .container {
+  width: 100%;
   min-height: 100vh;
   background-color: #f5f5f5;
   padding-bottom: 120rpx;
+  box-sizing: border-box;
 }
 
 .cover-section {
@@ -171,6 +173,14 @@
   line-height: 1.6;
 }
 
+.schedule-content-text {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 .creator-card {
   display: flex;
   align-items: flex-start;
@@ -263,5 +273,260 @@
   font-size: 28rpx;
   color: #666666;
   margin-bottom: 16rpx;
+}
+
+/* ========== 编辑活动弹窗样式 ========== */
+.edit-popup-container {
+  background-color: #ffffff;
+  border-radius: 32rpx 32rpx 0 0;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 10;
+}
+
+.edit-popup-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.edit-popup-close {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  color: #999999;
+  line-height: 1;
+}
+
+.edit-popup-content {
+  flex: 1;
+  max-height: calc(80vh - 200rpx);
+  padding: 32rpx;
+}
+
+.edit-form {
+  padding-bottom: 32rpx;
+}
+
+.edit-form .form-item {
+  margin-bottom: 48rpx;
+}
+
+.edit-form .form-label {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 16rpx;
+}
+
+.edit-form .date-row {
+  display: flex;
+  gap: 24rpx;
+}
+
+.edit-form .date-item {
+  flex: 1;
+}
+
+.edit-form .date-label {
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 8rpx;
+}
+
+.edit-form .picker-content {
+  padding: 24rpx;
+  background-color: #ffffff;
+  border: 1rpx solid #e0e0e0;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.edit-form .location-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.edit-form .location-input {
+  flex: 1;
+}
+
+.edit-form .location-btn {
+  padding: 24rpx;
+  background-color: #f5f5f5;
+  border-radius: 16rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-form .location-icon {
+  font-size: 32rpx;
+}
+
+.edit-form .tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.edit-form .tags-container .t-tag {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.edit-form .stepper-container {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.edit-form .stepper-unit {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.edit-form .cover-upload-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 24rpx;
+  width: 100%;
+}
+
+.edit-form .cover-preview {
+  position: relative;
+  width: 400rpx;
+  height: 300rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.edit-form .cover-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 16rpx;
+}
+
+.edit-form .cover-delete {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 48rpx;
+  height: 48rpx;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.edit-form .delete-icon {
+  color: #ffffff;
+  font-size: 36rpx;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.edit-form .cover-upload-btn {
+  flex-shrink: 0;
+  width: 300rpx;
+  height: 300rpx;
+  display: block;
+}
+
+.edit-form .cover-upload-btn.t-upload {
+  width: 300rpx !important;
+  height: 300rpx !important;
+  position: relative;
+}
+
+.edit-form .cover-upload-btn .t-grid {
+  width: 100%;
+  height: 100%;
+}
+
+.edit-form .cover-upload-btn .t-upload__grid-content {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+.edit-form .cover-upload-btn .t-upload__grid {
+  width: 100%;
+  height: 100%;
+}
+
+.edit-form .cover-upload-btn .t-upload__wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.edit-form .cover-upload-btn .t-upload__add-icon {
+  display: none !important;
+}
+
+.edit-form .upload-add-btn {
+  width: 100%;
+  height: 100%;
+  border: 2rpx dashed #e0e0e0;
+  border-radius: 16rpx;
+  background-color: #fafafa;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.edit-form .upload-add-btn:active {
+  background-color: #f0f0f0;
+  border-color: #d0d0d0;
+}
+
+.edit-form .add-icon {
+  font-size: 80rpx;
+  color: #999999;
+  font-weight: 300;
+  line-height: 1;
+  display: block;
+}
+
+.edit-form .upload-hint-text {
+  font-size: 24rpx;
+  color: #999999;
+  margin-top: 16rpx;
+}
+
+.edit-popup-footer {
+  display: flex;
+  padding: 24rpx 32rpx;
+  border-top: 1rpx solid #f0f0f0;
+  background-color: #ffffff;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
 }
 

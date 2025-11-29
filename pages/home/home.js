@@ -4,64 +4,7 @@ Page({
     searchValue: '',
     refreshing: false,
     loading: false,
-    activities: [
-      {
-        id: 1,
-        title: '周末黄山露营之旅',
-        dateRange: '2024.03.15 - 03.17',
-        location: '安徽·黄山',
-        cover: 'https://via.placeholder.com/160x160/4F46E5/ffffff?text=活动',
-        creator: {
-          name: '张三',
-          avatar: 'https://via.placeholder.com/40x40/0052D9/ffffff?text=张'
-        },
-        currentMembers: 3,
-        maxMembers: 8,
-        tags: ['徒步', '露营']
-      },
-      {
-        id: 2,
-        title: '杭州西湖摄影一日游',
-        dateRange: '2024.03.20',
-        location: '浙江·杭州',
-        cover: 'https://via.placeholder.com/160x160/10B981/ffffff?text=活动',
-        creator: {
-          name: '李四',
-          avatar: 'https://via.placeholder.com/40x40/EF4444/ffffff?text=李'
-        },
-        currentMembers: 5,
-        maxMembers: 10,
-        tags: ['摄影', '轻松游']
-      },
-      {
-        id: 3,
-        title: '云南大理洱海环湖骑行',
-        dateRange: '2024.03.25 - 03.28',
-        location: '云南·大理',
-        cover: 'https://via.placeholder.com/160x160/F59E0B/ffffff?text=活动',
-        creator: {
-          name: '王五',
-          avatar: 'https://via.placeholder.com/40x40/8B5CF6/ffffff?text=王'
-        },
-        currentMembers: 7,
-        maxMembers: 12,
-        tags: ['骑行', '探险']
-      },
-      {
-        id: 4,
-        title: '上海外滩夜景美食探索',
-        dateRange: '2024.03.18',
-        location: '上海·黄浦区',
-        cover: 'https://via.placeholder.com/160x160/EC4899/ffffff?text=活动',
-        creator: {
-          name: '赵六',
-          avatar: 'https://via.placeholder.com/40x40/14B8A6/ffffff?text=赵'
-        },
-        currentMembers: 2,
-        maxMembers: 6,
-        tags: ['美食', '文化']
-      }
-    ]
+    activities: []
   },
 
   onLoad() {
@@ -76,8 +19,11 @@ Page({
   },
 
   onSearch(e) {
-    console.log('搜索:', e.detail.value)
-    // 实现搜索逻辑
+    const searchValue = e.detail.value || this.data.searchValue
+    this.setData({
+      searchValue: searchValue
+    })
+    // 重新加载活动列表
     this.loadActivities()
   },
 
@@ -112,13 +58,150 @@ Page({
     }, 1000)
   },
 
-  loadActivities() {
-    return new Promise((resolve) => {
-      // 模拟 API 调用
-      setTimeout(() => {
-        resolve()
-      }, 500)
+  // 从云数据库加载活动列表
+  async loadActivities() {
+    if (this.data.loading) {
+      return Promise.resolve()
+    }
+
+    this.setData({
+      loading: true
     })
+
+    try {
+      const db = wx.cloud.database()
+      
+      // 构建查询条件
+      let query = db.collection('activities')
+      
+      // 如果有搜索关键词，添加搜索条件
+      if (this.data.searchValue) {
+        query = query.where({
+          $or: [
+            { title: db.RegExp({
+              regexp: this.data.searchValue,
+              options: 'i'
+            })},
+            { location: db.RegExp({
+              regexp: this.data.searchValue,
+              options: 'i'
+            })}
+          ]
+        })
+      }
+
+      // 查询活动列表，按创建时间倒序排列
+      const activitiesRes = await query
+        .orderBy('createTime', 'desc')
+        .get()
+
+      // 如果没有活动数据，直接返回
+      if (activitiesRes.data.length === 0) {
+        this.setData({
+          activities: [],
+          loading: false
+        })
+        return Promise.resolve()
+      }
+
+      // 获取所有创建者ID
+      const creatorIds = [...new Set(activitiesRes.data.map(item => item.creatorId).filter(id => id))]
+      
+      // 创建用户信息映射
+      const userMap = {}
+      
+      // 如果有创建者ID，批量查询创建者信息
+      if (creatorIds.length > 0) {
+        try {
+          const usersRes = await db.collection('users')
+            .where({
+              _id: db.command.in(creatorIds)
+            })
+            .get()
+
+          usersRes.data.forEach(user => {
+            userMap[user._id] = {
+              name: user.name || '未命名用户',
+              avatar: user.avatar || '/assets/icons/pngtree-default-avatar-image_2238788.jpg'
+            }
+          })
+        } catch (error) {
+          console.error('查询用户信息失败:', error)
+          // 如果批量查询失败，逐个查询
+          for (const creatorId of creatorIds) {
+            try {
+              const userRes = await db.collection('users').doc(creatorId).get()
+              if (userRes.data) {
+                userMap[creatorId] = {
+                  name: userRes.data.name || '未命名用户',
+                  avatar: userRes.data.avatar || '/assets/icons/pngtree-default-avatar-image_2238788.jpg'
+                }
+              }
+            } catch (err) {
+              console.error(`查询用户 ${creatorId} 失败:`, err)
+            }
+          }
+        }
+      }
+
+      // 格式化活动数据
+      const activities = activitiesRes.data.map(activity => {
+        const creator = userMap[activity.creatorId] || {
+          name: '未知用户',
+          avatar: '/assets/icons/pngtree-default-avatar-image_2238788.jpg'
+        }
+
+        // 处理封面图片：如果有云存储 fileID，直接使用；否则使用默认占位图
+        let coverImage = ''
+        if (activity.cover) {
+          // 云存储的 fileID 可以直接作为图片源使用
+          coverImage = activity.cover
+        } else {
+          // 使用本地默认图片作为占位图
+          coverImage = '/assets/icons/pngtree-default-avatar-image_2238788.jpg'
+        }
+
+        return {
+          id: activity._id,
+          title: activity.title || '未命名活动',
+          dateRange: activity.dateRange || this.formatDateRange(activity.startDate, activity.endDate),
+          location: activity.location || '未设置地点',
+          cover: coverImage,
+          creator: creator,
+          currentMembers: activity.currentMembers || 1,
+          maxMembers: activity.maxMembers || 8,
+          tags: activity.tags || []
+        }
+      })
+
+      this.setData({
+        activities: activities,
+        loading: false
+      })
+
+      return Promise.resolve()
+    } catch (error) {
+      console.error('加载活动列表失败:', error)
+      this.setData({
+        loading: false
+      })
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none'
+      })
+      return Promise.reject(error)
+    }
+  },
+
+  // 格式化日期范围
+  formatDateRange(startDate, endDate) {
+    if (!startDate || !endDate) {
+      return ''
+    }
+    if (startDate === endDate) {
+      return startDate.replace(/-/g, '.')
+    }
+    return `${startDate.replace(/-/g, '.')} - ${endDate.replace(/-/g, '.')}`
   },
 
   onCreateActivity() {

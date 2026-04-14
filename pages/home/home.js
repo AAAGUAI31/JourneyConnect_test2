@@ -13,9 +13,11 @@ Page({
   },
 
   onSearchChange(e) {
-    this.setData({
-      searchValue: e.detail.value
-    })
+    const value = e.detail.value
+    this.setData({ searchValue: value })
+    if (value === '') {
+      this.loadActivities()
+    }
   },
 
   onSearch(e) {

@@ -2,7 +2,9 @@
 <view class="container">
   <!-- 顶部搜索栏 -->
   <view class="search-bar">
-    <t-search value="{{searchValue}}" placeholder="搜索活动、地点..." bind:change="onSearchChange" bind:submit="onSearch" />
+    <view class="search-input-wrapper">
+      <t-search value="{{searchValue}}" placeholder="搜索活动、地点..." bind:change="onSearchChange" bind:submit="onSearch" />
+    </view>
     <view class="filter-btn" bindtap="onFilter">筛选</view>
   </view>
 
@@ -17,14 +19,14 @@
         <view class="card-left">
           <view class="activity-title">{{item.title}}</view>
           <view class="activity-info">
-            <text class="info-item">
+            <view class="info-item">
               <text class="icon">📅</text>
-              {{item.dateRange}}
-            </text>
-            <text class="info-item">
+              <text>{{item.dateRange}}</text>
+            </view>
+            <view class="info-item">
               <text class="icon">📍</text>
-              {{item.location}}
-            </text>
+              <text>{{item.location}}</text>
+            </view>
           </view>
             <view class="activity-footer">
               <view class="creator-info">

@@ -50,6 +50,18 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+.user-avatar-img {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.edit-avatar-img {
+  width: 120rpx;
+  height: 120rpx;
+}
+
 .edit-btn {
   width: 48rpx;
   height: 48rpx;
@@ -177,17 +189,188 @@
   padding: 64rpx 32rpx;
 }
 
-.edit-form {
-  padding: 32rpx 0;
+.edit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.edit-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-height: 85vh;
+  background-color: #ffffff;
+  border-radius: 24rpx 24rpx 0 0;
+  z-index: 1000;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-panel-show {
+  transform: translateY(0);
+}
+
+.edit-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.edit-header-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.edit-header-btn {
+  font-size: 28rpx;
+  color: #666666;
+  padding: 8rpx 16rpx;
+  min-width: 80rpx;
+}
+
+.edit-header-save {
+  color: #0052D9;
+  font-weight: 500;
+  text-align: right;
+}
+
+.edit-panel-body {
+  flex: 1;
+  padding: 0 32rpx 48rpx;
+  box-sizing: border-box;
+}
+
+.avatar-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 0 32rpx;
+  gap: 16rpx;
+}
+
+.avatar-hint {
+  font-size: 24rpx;
+  color: #0052D9;
+}
+
+.form-section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 32rpx 0 16rpx;
 }
 
 .form-item {
-  margin-bottom: 32rpx;
+  margin-bottom: 24rpx;
 }
 
 .form-label {
   font-size: 28rpx;
   color: #666666;
-  margin-bottom: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+/* 邮箱状态行 */
+.user-info-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.verify-badge {
+  font-size: 20rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 20rpx;
+  margin-left: 10rpx;
+  flex-shrink: 0;
+}
+
+.verify-badge.verified {
+  color: #07c160;
+  background: rgba(7, 193, 96, 0.15);
+}
+
+.verify-badge.unverified {
+  color: #999999;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* 编辑面板邮箱字段 */
+.email-form-item {
+  cursor: pointer;
+}
+
+.email-field-display {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background: #f7f7f7;
+  border-radius: 12rpx;
+  min-height: 72rpx;
+}
+
+.email-field-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+/* 邮箱验证弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+}
+
+.modal-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 48rpx 32rpx 80rpx;
+  z-index: 1002;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.modal-panel-show {
+  transform: translateY(0);
+}
+
+.modal-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: center;
+  margin-bottom: 24rpx;
+}
+
+.modal-desc {
+  font-size: 26rpx;
+  color: #666666;
+  margin-bottom: 28rpx;
+  line-height: 1.5;
+}
+
+.modal-input {
+  margin-bottom: 8rpx;
 }
 

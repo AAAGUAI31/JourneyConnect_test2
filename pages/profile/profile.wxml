@@ -4,13 +4,21 @@
   <view class="user-header">
     <view class="user-info-card">
       <view class="user-info">
-        <t-avatar size="{{160}}" image="{{userInfo ? userInfo.avatar : ''}}" />
+        <image class="user-avatar-img"
+          src="{{userInfo && userInfo.avatar ? userInfo.avatar : '/assets/icons/pngtree-default-avatar-image_2238788.jpg'}}"
+          mode="aspectFill" />
         <view class="user-details">
           <view class="user-name-row">
             <text class="user-name">{{userInfo ? userInfo.name : '未登录'}}</text>
             <t-tag wx:if="{{userInfo && userInfo.verified}}" size="small" theme="success">已认证</t-tag>
           </view>
-          <text class="user-wechat" wx:if="{{userInfo && userInfo.wechat}}">微信号：{{userInfo.wechat}}</text>
+          <text class="user-wechat" wx:if="{{userInfo && userInfo.wechat}}">微信：{{userInfo.wechat}}</text>
+          <text class="user-wechat" wx:if="{{userInfo && userInfo.phone}}">📱 {{userInfo.phone}}</text>
+          <view class="user-info-row" wx:if="{{userInfo}}" bindtap="onEmailVerifyTap">
+            <text class="user-wechat">✉️ {{userInfo.email || '未绑定邮箱'}}</text>
+            <text wx:if="{{userInfo.emailVerified}}" class="verify-badge verified">已验证</text>
+            <text wx:else class="verify-badge unverified">未验证</text>
+          </view>
           <text class="user-signature" wx:if="{{userInfo && userInfo.signature}}">{{userInfo.signature}}</text>
         </view>
         <view class="edit-btn" bindtap="onEditProfile">
@@ -49,14 +57,14 @@
               <view class="card-left">
                 <view class="activity-title">{{activity.title}}</view>
                 <view class="activity-info">
-                  <text class="info-item">
+                  <view class="info-item">
                     <text class="icon">📅</text>
-                    {{activity.dateRange}}
-                  </text>
-                  <text class="info-item">
+                    <text>{{activity.dateRange}}</text>
+                  </view>
+                  <view class="info-item">
                     <text class="icon">📍</text>
-                    {{activity.location}}
-                  </text>
+                    <text>{{activity.location}}</text>
+                  </view>
                 </view>
                 <view class="activity-footer">
                   <text class="member-count">{{activity.currentMembers}}/{{activity.maxMembers}} 人</text>
@@ -78,14 +86,14 @@
               <view class="card-left">
                 <view class="activity-title">{{activity.title}}</view>
                 <view class="activity-info">
-                  <text class="info-item">
+                  <view class="info-item">
                     <text class="icon">📅</text>
-                    {{activity.dateRange}}
-                  </text>
-                  <text class="info-item">
+                    <text>{{activity.dateRange}}</text>
+                  </view>
+                  <view class="info-item">
                     <text class="icon">📍</text>
-                    {{activity.location}}
-                  </text>
+                    <text>{{activity.location}}</text>
+                  </view>
                 </view>
                 <view class="activity-footer">
                   <text class="member-count">{{activity.currentMembers}}/{{activity.maxMembers}} 人</text>
@@ -106,17 +114,73 @@
   </view>
 </scroll-view>
 
-<!-- 编辑个人信息弹窗 -->
-<t-dialog visible="{{showEditDialog}}" title="编辑个人信息" bind:confirm="onSaveProfile" bind:cancel="onCancelEdit">
-  <view class="edit-form">
-    <view class="form-item">
-      <view class="form-label">个性签名</view>
-      <t-textarea placeholder="介绍一下自己..." value="{{editForm.signature}}" bind:change="onEditFormChange" data-field="signature" maxlength="100" rows="4" />
-    </view>
-    <view class="form-item">
-      <view class="form-label">联系方式</view>
-      <t-input placeholder="微信号或手机号" value="{{editForm.contact}}" bind:change="onEditFormChange" data-field="contact" />
-    </view>
+<!-- 编辑个人信息面板 -->
+<view class="edit-overlay" wx:if="{{showEditDialog}}" bindtap="onCancelEdit" />
+<view class="edit-panel {{showEditDialog ? 'edit-panel-show' : ''}}">
+  <view class="edit-panel-header">
+    <view class="edit-header-btn" bindtap="onCancelEdit">取消</view>
+    <text class="edit-header-title">编辑个人信息</text>
+    <view class="edit-header-btn edit-header-save" bindtap="onSaveProfile">保存</view>
   </view>
-</t-dialog>
+  <scroll-view scroll-y class="edit-panel-body">
+    <!-- 头像 -->
+    <view class="avatar-upload-section" bindtap="onChooseAvatar">
+      <image class="user-avatar-img edit-avatar-img"
+        src="{{editForm.avatar || '/assets/icons/pngtree-default-avatar-image_2238788.jpg'}}"
+        mode="aspectFill" />
+      <text class="avatar-hint">点击更换头像</text>
+    </view>
+
+    <!-- 昵称 -->
+    <view class="form-item">
+      <view class="form-label">昵称</view>
+      <t-input placeholder="请输入昵称" value="{{editForm.name}}" bind:change="onEditFormChange" data-field="name" />
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="form-section-title">联系方式</view>
+    <view class="form-item">
+      <view class="form-label">微信号</view>
+      <t-input placeholder="请输入微信号" value="{{editForm.wechat}}" bind:change="onEditFormChange" data-field="wechat" />
+    </view>
+    <view class="form-item">
+      <view class="form-label">手机号</view>
+      <t-input placeholder="请输入手机号" value="{{editForm.phone}}" bind:change="onEditFormChange" data-field="phone" />
+    </view>
+    <view class="form-item email-form-item" bindtap="onEmailVerifyTap">
+      <view class="form-label">邮箱</view>
+      <view class="email-field-display">
+        <text class="email-field-text">{{editForm.email || '点击绑定学校邮箱'}}</text>
+        <text wx:if="{{userInfo && userInfo.emailVerified}}" class="verify-badge verified">已验证</text>
+        <text wx:else class="verify-badge unverified">未验证</text>
+      </view>
+    </view>
+
+    <!-- 个人介绍 -->
+    <view class="form-section-title">个人介绍</view>
+    <view class="form-item">
+      <t-textarea placeholder="介绍一下自己..." value="{{editForm.signature}}" bind:change="onEditFormChange" data-field="signature" maxlength="200" rows="4" />
+    </view>
+  </scroll-view>
+</view>
+
+<!-- 邮箱验证弹窗 -->
+<view class="modal-overlay" wx:if="{{showEmailDialog}}" bindtap="onEmailDialogClose" />
+<view class="modal-panel {{showEmailDialog ? 'modal-panel-show' : ''}}">
+  <view class="modal-title">学校邮箱认证</view>
+  <block wx:if="{{emailStep === 1}}">
+    <view class="modal-desc">请输入您的学校邮箱（后缀需为 .edu.cn）</view>
+    <t-input class="modal-input" placeholder="例：xxx@stu.xxx.edu.cn" value="{{emailInput}}" bind:change="onEmailInput" />
+    <view style="height: 24rpx;"></view>
+    <t-button theme="primary" block bindtap="onSendEmailCode" loading="{{emailSending}}">发送验证码</t-button>
+  </block>
+  <block wx:if="{{emailStep === 2}}">
+    <view class="modal-desc">验证码已发送至 {{emailInput}}，10分钟内有效</view>
+    <t-input class="modal-input" placeholder="请输入6位验证码" value="{{emailCodeInput}}" bind:change="onEmailCodeInput" />
+    <view style="height: 24rpx;"></view>
+    <t-button theme="primary" block bindtap="onVerifyEmailCode" loading="{{emailVerifying}}">确认验证</t-button>
+    <view style="height: 20rpx;"></view>
+    <t-button theme="light" block bindtap="onResendCode">重新发送</t-button>
+  </block>
+</view>
 

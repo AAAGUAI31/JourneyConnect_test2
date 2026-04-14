@@ -379,6 +379,21 @@ Page({
       return
     }
 
+    // 检查邮箱认证状态
+    if (!userInfo.emailVerified) {
+      wx.showToast({
+        title: '请先完成学校邮箱认证',
+        icon: 'none',
+        duration: 2000
+      })
+      setTimeout(() => {
+        wx.switchTab({
+          url: '/pages/profile/profile'
+        })
+      }, 1500)
+      return
+    }
+
     // 提交活动
     wx.showLoading({
       title: '发布中...',

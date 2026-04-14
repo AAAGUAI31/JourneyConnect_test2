@@ -74,11 +74,23 @@
   <view class="members-list-section">
     <view class="section-title">报名人员（{{activity.currentMembers}}人）</view>
     <view class="members-list">
-      <view wx:for="{{activity.members}}" wx:key="id" wx:for-item="member" class="member-item">
+      <view
+        wx:for="{{activity.members}}"
+        wx:key="id"
+        wx:for-item="member"
+        class="member-item"
+        bindtap="onMemberTap"
+        data-member="{{member}}"
+      >
         <t-avatar size="{{96}}" image="{{member.avatar}}" />
         <view class="member-info">
-          <text class="member-name">{{member.name}}</text>
+          <view class="member-name-row">
+            <text class="member-name">{{member.name}}</text>
+            <t-tag wx:if="{{member.isCreator}}" size="small" theme="success">发起人</t-tag>
+          </view>
+          <text class="member-hint">点击查看详情</text>
         </view>
+        <text class="member-arrow">›</text>
       </view>
     </view>
   </view>
@@ -117,33 +129,105 @@
 </scroll-view>
 
 <!-- 报名弹窗 -->
-<t-dialog visible="{{showRegisterDialog}}" title="报名信息" bind:confirm="onRegisterConfirm" bind:cancel="onRegisterCancel">
-  <view class="register-form">
-    <view class="form-item">
-      <view class="form-label">姓名/昵称 *</view>
-      <t-input placeholder="请输入姓名或昵称" value="{{registerForm.name}}" bind:change="onFormChange" data-field="name" />
+<t-popup visible="{{showRegisterDialog}}" placement="bottom">
+  <view class="register-popup-container">
+    <view class="register-popup-header">
+      <text class="register-popup-title">报名信息</text>
+      <view class="register-popup-close" bindtap="onRegisterCancel">
+        <text>×</text>
+      </view>
     </view>
-    <view class="form-item">
-      <view class="form-label">性别 *</view>
-      <t-radio-group value="{{registerForm.gender}}" bind:change="onGenderChange">
-        <t-radio value="male" label="男" />
-        <t-radio value="female" label="女" />
-      </t-radio-group>
-    </view>
-    <view class="form-item">
-      <view class="form-label">年龄（可选）</view>
-      <t-input type="digit" placeholder="请输入年龄" value="{{registerForm.age}}" bind:change="onFormChange" data-field="age" />
-    </view>
-    <view class="form-item">
-      <view class="form-label">联系方式 *</view>
-      <t-input placeholder="微信号或手机号" value="{{registerForm.contact}}" bind:change="onFormChange" data-field="contact" />
-    </view>
-    <view class="form-item">
-      <view class="form-label">自我介绍</view>
-      <t-textarea placeholder="简单介绍一下自己..." value="{{registerForm.intro}}" bind:change="onFormChange" data-field="intro" maxlength="200" />
+
+    <scroll-view scroll-y class="register-popup-content">
+      <view class="register-form">
+        <view class="form-item">
+          <view class="form-label">姓名/昵称 *</view>
+          <t-input placeholder="请输入姓名或昵称" value="{{registerForm.name}}" bind:change="onFormChange" data-field="name" />
+        </view>
+        <view class="form-item">
+          <view class="form-label">性别 *</view>
+          <t-radio-group value="{{registerForm.gender}}" bind:change="onGenderChange">
+            <t-radio value="male" label="男" />
+            <t-radio value="female" label="女" />
+          </t-radio-group>
+        </view>
+        <view class="form-item">
+          <view class="form-label">年龄（可选）</view>
+          <t-input type="digit" placeholder="请输入年龄" value="{{registerForm.age}}" bind:change="onFormChange" data-field="age" />
+        </view>
+        <view class="form-item">
+          <view class="form-label">联系方式 *</view>
+          <t-input placeholder="微信号或手机号" value="{{registerForm.contact}}" bind:change="onFormChange" data-field="contact" />
+        </view>
+        <view class="form-item">
+          <view class="form-label">自我介绍（可选）</view>
+          <t-textarea placeholder="简单介绍一下自己..." value="{{registerForm.intro}}" bind:change="onFormChange" data-field="intro" maxlength="200" />
+        </view>
+        <view class="form-item">
+          <view class="form-label">备注（可选）</view>
+          <t-textarea placeholder="有什么需要告知组织者的，请填写..." value="{{registerForm.remark}}" bind:change="onFormChange" data-field="remark" maxlength="200" />
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="register-popup-footer">
+      <t-button theme="default" size="large" bindtap="onRegisterCancel" style="margin-right: 16rpx; flex: 1;">
+        取消
+      </t-button>
+      <t-button theme="primary" size="large" bindtap="onRegisterConfirm" style="flex: 1;">
+        确认报名
+      </t-button>
     </view>
   </view>
-</t-dialog>
+</t-popup>
+
+<!-- 成员详情弹窗 -->
+<t-popup visible="{{showMemberDetail}}" placement="bottom" bind:visible-change="onMemberDetailClose">
+  <view class="member-detail-container" wx:if="{{selectedMember}}">
+    <view class="member-detail-header">
+      <text class="member-detail-title">成员信息</text>
+      <view class="member-detail-close" bindtap="onMemberDetailClose">
+        <text>×</text>
+      </view>
+    </view>
+    <view class="member-detail-body">
+      <view class="member-detail-profile">
+        <t-avatar size="{{128}}" image="{{selectedMember.avatar}}" />
+        <view class="member-detail-name-row">
+          <text class="member-detail-name">{{selectedMember.name}}</text>
+          <t-tag wx:if="{{selectedMember.isCreator}}" size="small" theme="success">发起人</t-tag>
+        </view>
+      </view>
+      <view class="detail-info-list">
+        <view class="detail-info-item" wx:if="{{selectedMember.gender}}">
+          <text class="detail-info-label">性别</text>
+          <text class="detail-info-value">{{selectedMember.gender === 'male' ? '男' : '女'}}</text>
+        </view>
+        <view class="detail-info-item" wx:if="{{selectedMember.age}}">
+          <text class="detail-info-label">年龄</text>
+          <text class="detail-info-value">{{selectedMember.age}} 岁</text>
+        </view>
+        <view class="detail-info-item" wx:if="{{selectedMember.contact}}">
+          <text class="detail-info-label">联系方式</text>
+          <text class="detail-info-value">{{selectedMember.contact}}</text>
+        </view>
+        <view class="detail-info-item" wx:if="{{selectedMember.intro}}">
+          <text class="detail-info-label">自我介绍</text>
+          <text class="detail-info-value">{{selectedMember.intro}}</text>
+        </view>
+        <view class="detail-info-item" wx:if="{{selectedMember.remark}}">
+          <text class="detail-info-label">备注</text>
+          <text class="detail-info-value">{{selectedMember.remark}}</text>
+        </view>
+        <view class="detail-info-empty"
+          wx:if="{{!selectedMember.gender && !selectedMember.age && !selectedMember.contact && !selectedMember.intro && !selectedMember.remark}}"
+        >
+          <text>暂无更多信息</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</t-popup>
 
 <!-- 编辑活动弹窗 -->
 <t-popup visible="{{showEditDialog}}" placement="bottom">

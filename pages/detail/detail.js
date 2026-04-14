@@ -12,7 +12,8 @@ Page({
       gender: '',
       age: '',
       contact: '',
-      intro: ''
+      intro: '',
+      remark: ''
     },
     // 编辑活动表单
     editForm: {
@@ -32,7 +33,9 @@ Page({
       width: 300,
       height: 300
     },
-    originalActivityData: null // 保存原始活动数据，用于对比
+    originalActivityData: null, // 保存原始活动数据，用于对比
+    selectedMember: null, // 当前点击查看的成员
+    showMemberDetail: false // 成员详情弹窗
   },
 
   onLoad(options) {
@@ -95,61 +98,58 @@ Page({
         }
       }
 
-      // 3. 查询活动成员列表
-      const membersRes = await db.collection('activity_members')
-        .where({
-          activityId: id
+      // 3. 通过云函数查询活动成员列表（云函数有管理员权限，可读取所有人的记录）
+      const defaultAvatar = '/assets/icons/pngtree-default-avatar-image_2238788.jpg'
+      let memberRecords = []
+      let userMap = {}
+
+      try {
+        const memberResult = await wx.cloud.callFunction({
+          name: 'user',
+          data: { action: 'getActivityMembers', activityId: id }
         })
-        .get()
-
-      // 获取所有成员的用户ID
-      const memberUserIds = membersRes.data.map(item => item.userId).filter(id => id)
-      
-      // 批量查询成员的用户信息
-      const members = []
-      if (memberUserIds.length > 0) {
-        try {
-          const usersRes = await db.collection('users')
-            .where({
-              _id: db.command.in(memberUserIds)
-            })
-            .get()
-
-          // 创建用户信息映射
-          const userMap = {}
-          usersRes.data.forEach(user => {
-            userMap[user._id] = {
-              id: user._id,
-              name: user.name || '未命名用户',
-              avatar: user.avatar || '/assets/icons/pngtree-default-avatar-image_2238788.jpg'
-            }
-          })
-
-          // 按照加入时间排序（如果需要的话，可以按 joinTime 排序）
-          membersRes.data.forEach(member => {
-            if (userMap[member.userId]) {
-              members.push(userMap[member.userId])
-            }
-          })
-        } catch (error) {
-          console.error('查询成员信息失败:', error)
-          // 如果批量查询失败，逐个查询
-          for (const member of membersRes.data) {
-            try {
-              const userRes = await db.collection('users').doc(member.userId).get()
-              if (userRes.data) {
-                members.push({
-                  id: userRes.data._id,
-                  name: userRes.data.name || '未命名用户',
-                  avatar: userRes.data.avatar || '/assets/icons/pngtree-default-avatar-image_2238788.jpg'
-                })
-              }
-            } catch (err) {
-              console.error(`查询用户 ${member.userId} 失败:`, err)
-            }
-          }
+        if (memberResult.result && memberResult.result.success) {
+          memberRecords = memberResult.result.members || []
+          userMap = memberResult.result.userMap || {}
         }
+      } catch (error) {
+        console.error('查询活动成员失败:', error)
       }
+
+      // 构建完整成员列表：发起人置顶，后接其他报名者
+      const allMembers = []
+
+      // 发起人始终排在第一位
+      const creatorRecord = memberRecords.find(m => m.userId === activityData.creatorId)
+      const creatorUser = userMap[activityData.creatorId] || { name: creator.name, avatar: creator.avatar }
+      allMembers.push({
+        id: activityData.creatorId,
+        name: creatorUser.name,
+        avatar: creatorUser.avatar || defaultAvatar,
+        contact: creatorRecord ? (creatorRecord.contact || '') : (creator.wechat || activityData.contact || ''),
+        intro: creatorRecord ? (creatorRecord.intro || '') : '',
+        remark: creatorRecord ? (creatorRecord.remark || '') : '',
+        gender: creatorRecord ? (creatorRecord.gender || '') : '',
+        age: creatorRecord ? (creatorRecord.age || '') : '',
+        isCreator: true
+      })
+
+      // 其他报名成员（跳过发起人）
+      memberRecords.forEach(memberRecord => {
+        if (memberRecord.userId === activityData.creatorId) return
+        const userInfo = userMap[memberRecord.userId]
+        allMembers.push({
+          id: memberRecord.userId,
+          name: userInfo ? userInfo.name : (memberRecord.name || '未命名用户'),
+          avatar: userInfo ? (userInfo.avatar || defaultAvatar) : defaultAvatar,
+          contact: memberRecord.contact || '',
+          intro: memberRecord.intro || '',
+          remark: memberRecord.remark || '',
+          gender: memberRecord.gender || '',
+          age: memberRecord.age || '',
+          isCreator: false
+        })
+      })
 
       // 4. 格式化活动数据
       // 处理封面图片：如果有云存储 fileID，直接使用；否则使用默认占位图
@@ -169,12 +169,12 @@ Page({
         dateRange: activityData.dateRange || this.formatDateRange(activityData.startDate, activityData.endDate),
         location: activityData.location || '未设置地点',
         status: activityData.status || '报名中',
-        currentMembers: activityData.currentMembers || 1,
+        currentMembers: allMembers.length,
         maxMembers: activityData.maxMembers || 8,
         tags: activityData.tags || [],
         description: activityData.description || '',
         creator: creator,
-        members: members
+        members: allMembers
       }
 
       // 5. 检查当前用户是否已报名和是否是创建者
@@ -216,6 +216,21 @@ Page({
     return `${startDate.replace(/-/g, '.')} - ${endDate.replace(/-/g, '.')}`
   },
 
+  onMemberTap(e) {
+    const member = e.currentTarget.dataset.member
+    this.setData({
+      selectedMember: member,
+      showMemberDetail: true
+    })
+  },
+
+  onMemberDetailClose() {
+    this.setData({
+      showMemberDetail: false,
+      selectedMember: null
+    })
+  },
+
   onShowMembers() {
     wx.showToast({
       title: '查看全部报名人员',
@@ -233,6 +248,21 @@ Page({
       })
       setTimeout(() => {
         wx.navigateTo({
+          url: '/pages/profile/profile'
+        })
+      }, 1500)
+      return
+    }
+
+    // 检查邮箱认证状态
+    if (!userInfo.emailVerified) {
+      wx.showToast({
+        title: '请先完成学校邮箱认证',
+        icon: 'none',
+        duration: 2000
+      })
+      setTimeout(() => {
+        wx.switchTab({
           url: '/pages/profile/profile'
         })
       }, 1500)
@@ -263,8 +293,9 @@ Page({
       name: userInfo.name || '',
       gender: '',
       age: '',
-      contact: userInfo.wechat || '',
-      intro: ''
+      contact: userInfo.phone || userInfo.wechat || '',
+      intro: '',
+      remark: ''
     }
 
     if (isRegistered && this.data.isCreator) {
@@ -276,15 +307,16 @@ Page({
             userId: userInfo._id
           })
           .get()
-        
+
         if (memberRes.data.length > 0) {
           const memberData = memberRes.data[0]
           formData = {
             name: memberData.name || userInfo.name || '',
             gender: memberData.gender || '',
             age: memberData.age || '',
-            contact: memberData.contact || userInfo.wechat || '',
-            intro: memberData.intro || ''
+            contact: memberData.contact || userInfo.phone || userInfo.wechat || '',
+            intro: memberData.intro || '',
+            remark: memberData.remark || ''
           }
         }
       } catch (error) {
@@ -330,7 +362,8 @@ Page({
         gender: '',
         age: '',
         contact: '',
-        intro: ''
+        intro: '',
+        remark: ''
       }
     })
   },
@@ -409,6 +442,7 @@ Page({
             age: this.data.registerForm.age || '',
             contact: contact,
             intro: this.data.registerForm.intro || '',
+            remark: this.data.registerForm.remark || '',
             updateTime: db.serverDate()
           }
         })
@@ -423,6 +457,7 @@ Page({
             age: this.data.registerForm.age || '',
             contact: contact,
             intro: this.data.registerForm.intro || '',
+            remark: this.data.registerForm.remark || '',
             joinTime: db.serverDate(),
             status: '已加入'
           }
@@ -460,7 +495,8 @@ Page({
           gender: '',
           age: '',
           contact: '',
-          intro: ''
+          intro: '',
+          remark: ''
         }
       })
 

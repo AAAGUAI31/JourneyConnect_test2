@@ -45,9 +45,20 @@ Page({
     ],
     showEditDialog: false,
     editForm: {
-      signature: '',
-      contact: ''
-    }
+      name: '',
+      avatar: '',
+      avatarFileID: '',
+      wechat: '',
+      phone: '',
+      email: '',
+      signature: ''
+    },
+    showEmailDialog: false,
+    emailStep: 1,
+    emailInput: '',
+    emailCodeInput: '',
+    emailSending: false,
+    emailVerifying: false
   },
 
   async onLoad() {
@@ -100,16 +111,29 @@ Page({
 
       if (res.result.success) {
         const userInfo = res.result.user
+
+        // 将头像 cloud:// fileID 转为临时 HTTP URL 用于展示，fileID 单独保存
+        const displayUserInfo = { ...userInfo }
+        if (displayUserInfo.avatar && displayUserInfo.avatar.startsWith('cloud://')) {
+          displayUserInfo._avatarFileID = displayUserInfo.avatar
+          try {
+            const tempRes = await wx.cloud.getTempFileURL({ fileList: [displayUserInfo.avatar] })
+            displayUserInfo.avatar = tempRes.fileList[0].tempFileURL || displayUserInfo.avatar
+          } catch (e) {
+            console.error('获取头像临时URL失败:', e)
+          }
+        }
+
         this.setData({
-          userInfo: userInfo,
+          userInfo: displayUserInfo,
           stats: {
             createdCount: userInfo.createdCount || 0,
             joinedCount: userInfo.joinedCount || 0,
             friendsCount: userInfo.friendsCount || 0
           }
         })
-        
-        // 更新缓存
+
+        // 缓存存原始数据（含 fileID，非临时URL）
         wx.setStorageSync('userInfo', userInfo)
         getApp().globalData.userInfo = userInfo
       } else {
@@ -404,8 +428,13 @@ Page({
           this.setData({
             showEditDialog: true,
             editForm: {
-              signature: this.data.userInfo.signature || '',
-              contact: this.data.userInfo.wechat || ''
+              name: this.data.userInfo.name || '',
+              avatar: this.data.userInfo.avatar || '',
+              avatarFileID: this.data.userInfo._avatarFileID || '',
+              wechat: this.data.userInfo.wechat || '',
+              phone: this.data.userInfo.phone || '',
+              email: this.data.userInfo.email || '',
+              signature: this.data.userInfo.signature || ''
             }
           })
         }
@@ -423,10 +452,57 @@ Page({
     this.setData({
       showEditDialog: true,
       editForm: {
-        signature: this.data.userInfo.signature || '',
-        contact: this.data.userInfo.wechat || ''
+        name: this.data.userInfo.name || '',
+        avatar: this.data.userInfo.avatar || '',
+        wechat: this.data.userInfo.wechat || '',
+        phone: this.data.userInfo.phone || '',
+        email: this.data.userInfo.email || '',
+        signature: this.data.userInfo.signature || ''
       }
     })
+  },
+
+  // 选择并上传头像
+  async onChooseAvatar() {
+    try {
+      const res = await wx.chooseMedia({
+        count: 1,
+        mediaType: ['image'],
+        sourceType: ['album', 'camera'],
+        sizeType: ['compressed']
+      })
+
+      const tempFilePath = res.tempFiles[0].tempFilePath
+      wx.showLoading({ title: '上传中...', mask: true })
+
+      const timestamp = Date.now()
+      const cloudPath = `avatars/${this.data.userInfo._id}_${timestamp}.jpg`
+
+      const uploadRes = await wx.cloud.uploadFile({
+        cloudPath: cloudPath,
+        filePath: tempFilePath
+      })
+
+      const fileID = uploadRes.fileID
+      // 获取临时 URL 用于编辑面板内预览
+      let previewURL = fileID
+      try {
+        const tempRes = await wx.cloud.getTempFileURL({ fileList: [fileID] })
+        previewURL = tempRes.fileList[0].tempFileURL || fileID
+      } catch (e) {
+        console.error('获取头像预览URL失败:', e)
+      }
+
+      this.setData({
+        'editForm.avatar': previewURL,
+        'editForm.avatarFileID': fileID
+      })
+    } catch (error) {
+      console.error('上传头像失败:', error)
+      wx.showToast({ title: '上传失败', icon: 'none' })
+    } finally {
+      wx.hideLoading()
+    }
   },
 
   onCancelEdit() {
@@ -451,25 +527,34 @@ Page({
     })
 
     try {
-      const { signature, contact } = this.data.editForm
-      
+      const { name, avatarFileID, wechat, phone, signature } = this.data.editForm
+
       const res = await wx.cloud.callFunction({
         name: 'user',
         data: {
           action: 'update',
-          userData: {
-            signature: signature,
-            wechat: contact
-          }
+          userData: { name, avatar: avatarFileID || undefined, wechat, phone, signature }
         }
       })
 
       if (res.result.success) {
-        const updatedUser = res.result.user
-        
-        // 更新本地缓存
-        wx.setStorageSync('userInfo', updatedUser)
-        getApp().globalData.userInfo = updatedUser
+        const updatedUserRaw = res.result.user
+
+        // 转换头像为临时 URL 用于展示，原始 fileID 存缓存
+        const updatedUser = { ...updatedUserRaw }
+        if (updatedUser.avatar && updatedUser.avatar.startsWith('cloud://')) {
+          updatedUser._avatarFileID = updatedUser.avatar
+          try {
+            const tempRes = await wx.cloud.getTempFileURL({ fileList: [updatedUser.avatar] })
+            updatedUser.avatar = tempRes.fileList[0].tempFileURL || updatedUser.avatar
+          } catch (e) {
+            console.error('获取头像临时URL失败:', e)
+          }
+        }
+
+        // 缓存存原始数据
+        wx.setStorageSync('userInfo', updatedUserRaw)
+        getApp().globalData.userInfo = updatedUserRaw
 
         this.setData({
           userInfo: updatedUser,
@@ -500,6 +585,100 @@ Page({
     this.setData({
       [`editForm.${field}`]: value
     })
+  },
+
+  onEmailVerifyTap() {
+    if (!this.data.isLoggedIn || !this.data.userInfo) {
+      wx.showToast({ title: '请先登录', icon: 'none' })
+      return
+    }
+    if (this.data.userInfo.emailVerified) {
+      wx.showToast({ title: '邮箱已认证', icon: 'success' })
+      return
+    }
+    this.setData({
+      showEmailDialog: true,
+      emailStep: 1,
+      emailInput: this.data.userInfo.email || '',
+      emailCodeInput: ''
+    })
+  },
+
+  onEmailDialogClose() {
+    if (this.data.emailSending || this.data.emailVerifying) return
+    this.setData({ showEmailDialog: false })
+  },
+
+  onEmailInput(e) {
+    this.setData({ emailInput: e.detail.value })
+  },
+
+  onEmailCodeInput(e) {
+    this.setData({ emailCodeInput: e.detail.value })
+  },
+
+  async onSendEmailCode() {
+    const email = this.data.emailInput.trim()
+    if (!email) {
+      wx.showToast({ title: '请输入邮箱地址', icon: 'none' })
+      return
+    }
+    this.setData({ emailSending: true })
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: { action: 'sendEmailCode', email }
+      })
+      if (res.result.success) {
+        wx.showToast({ title: '验证码已发送', icon: 'success' })
+        this.setData({ emailStep: 2, emailCodeInput: '' })
+      } else {
+        wx.showToast({ title: res.result.error || '发送失败', icon: 'none', duration: 3000 })
+      }
+    } catch (err) {
+      console.error('发送验证码失败:', err)
+      wx.showToast({ title: '发送失败，请重试', icon: 'none' })
+    } finally {
+      this.setData({ emailSending: false })
+    }
+  },
+
+  async onVerifyEmailCode() {
+    const code = this.data.emailCodeInput.trim()
+    if (!code) {
+      wx.showToast({ title: '请输入验证码', icon: 'none' })
+      return
+    }
+    this.setData({ emailVerifying: true })
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: { action: 'verifyEmailCode', email: this.data.emailInput.trim(), code }
+      })
+      if (res.result.success) {
+        wx.showToast({ title: '邮箱认证成功', icon: 'success' })
+        const updatedUser = res.result.user
+        wx.setStorageSync('userInfo', updatedUser)
+        getApp().globalData.userInfo = updatedUser
+        this.setData({
+          showEmailDialog: false,
+          'userInfo.email': updatedUser.email,
+          'userInfo.emailVerified': true,
+          'editForm.email': updatedUser.email
+        })
+      } else {
+        wx.showToast({ title: res.result.error || '验证失败', icon: 'none', duration: 3000 })
+      }
+    } catch (err) {
+      console.error('验证失败:', err)
+      wx.showToast({ title: '验证失败，请重试', icon: 'none' })
+    } finally {
+      this.setData({ emailVerifying: false })
+    }
+  },
+
+  onResendCode() {
+    this.setData({ emailStep: 1, emailCodeInput: '' })
   },
 
   onActivityTap(e) {

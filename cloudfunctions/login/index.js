@@ -30,6 +30,7 @@ exports.main = async (event, context) => {
         wechat: userInfo.nickName || '',
         signature: '',
         verified: false,
+        emailVerified: false,
         createdCount: 0,
         joinedCount: 0,
         friendsCount: 0,
